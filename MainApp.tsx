@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Language, Theme, LogEntry, Task, LogType } from './types';
+import { Language, Theme, LogEntry, Task } from './types';
 import Header from './components/Header';
 import TimeTracker from './components/TimeTracker';
 import LogManager from './components/LogManager';
@@ -10,6 +10,7 @@ import { useUserData } from './hooks/useUserData';
 import LoadingSpinner from './components/LoadingSpinner';
 import Reminders from './components/Reminders';
 import Sidebar from './components/Sidebar';
+// FIX: Import TourStep type from TourGuide component.
 import TourGuide, { TourStep } from './components/TourGuide';
 import useLocalStorage from './hooks/useLocalStorage';
 import WorkHoursChart from './components/WorkHoursChart';
@@ -33,14 +34,13 @@ const MainApp: React.FC<MainAppProps> = ({ user, onLogout, language, setLanguage
   const [isLogFormModalOpen, setIsLogFormModalOpen] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [logToEdit, setLogToEdit] = useState<LogEntry | null>(null);
-  const [logFormDefaultType, setLogFormDefaultType] = useState<LogType>('work');
-
 
   const [tourCompleted, setTourCompleted] = useLocalStorage('saati-tour-completed-v1', false);
   const [runTour, setRunTour] = useState(!tourCompleted);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useLocalStorage('saati-sidebar-collapsed', false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  // FIX: Explicitly type tourSteps with TourStep[] to resolve type inference error on the 'position' property.
   const tourSteps: TourStep[] = [
     { target: '#dashboard-widget', content: t('tourStep1') },
     { target: '#logs-widget', content: t('tourStep3') },
@@ -49,11 +49,8 @@ const MainApp: React.FC<MainAppProps> = ({ user, onLogout, language, setLanguage
     { target: '#tour-trigger', content: t('tourStep5'), position: 'right' },
   ];
 
-  const handleOpenLogForm = (log: LogEntry | null, type?: LogType) => {
+  const handleOpenLogForm = (log: LogEntry | null) => {
     setLogToEdit(log);
-    if (!log && type) {
-        setLogFormDefaultType(type);
-    }
     setIsLogFormModalOpen(true);
   }
   
@@ -119,7 +116,7 @@ const MainApp: React.FC<MainAppProps> = ({ user, onLogout, language, setLanguage
                     <LogManager 
                         logs={logs}
                         profile={profile}
-                        onAdd={(type) => handleOpenLogForm(null, type)}
+                        onAdd={() => handleOpenLogForm(null)}
                         onEdit={(log) => handleOpenLogForm(log)}
                         onDelete={deleteLog}
                         onGenerateReport={() => setIsReportModalOpen(true)}
@@ -165,11 +162,9 @@ const MainApp: React.FC<MainAppProps> = ({ user, onLogout, language, setLanguage
         onClose={() => {
           setIsLogFormModalOpen(false);
           setLogToEdit(null); // Clear logToEdit on close
-          setLogFormDefaultType('work'); // Reset default type
         }}
         onSave={saveLog}
         logToEdit={logToEdit}
-        defaultType={logFormDefaultType}
         t={t}
         showToast={showToast}
       />

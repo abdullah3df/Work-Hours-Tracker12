@@ -156,6 +156,7 @@
   }
 }
 </script>
+<link rel="stylesheet" href="/index.css">
 </head>
 <body>
     <div id="root"></div>
@@ -163,24 +164,20 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-    <script>
-      // This has been updated with your Firebase project configuration.
-      const firebaseConfig = {
-        apiKey: "AIzaSyAcv_qAECG5LCdIN45Rhr_zzHXhL3--2JE",
-        authDomain: "saaati-login.firebaseapp.com",
-        projectId: "saaati-login",
-        storageBucket: "saaati-login.appspot.com",
-        messagingSenderId: "711755388111",
-        appId: "1:711755388111:web:f130d27854bc9f32e253ba",
-        measurementId: "G-6N5LNT2KC3"
-      };
+    <script type="module">
+      import { firebaseConfig } from './firebaseConfig.js';
+      
       // Initialize Firebase
       try {
-        if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "YOUR_API_KEY") {
+        // Check if the API key is present and Firebase is not already initialized.
+        // The API key is injected from environment variables.
+        if (firebaseConfig.apiKey && firebase.apps.length === 0) {
           firebase.initializeApp(firebaseConfig);
+        } else if (!firebaseConfig.apiKey) {
+          console.warn("Firebase API Key is missing. Please ensure it is set in your environment variables. The app will continue, but authentication will fail.");
         }
       } catch (e) {
-        console.error("Firebase initialization error. Please check your firebaseConfig.", e);
+        console.error("Firebase initialization error. Please check your Firebase configuration and ensure the API key is valid.", e);
       }
     </script>
     <script type="module" src="/index.tsx"></script>

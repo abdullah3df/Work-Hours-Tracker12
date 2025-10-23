@@ -6,7 +6,6 @@ export interface ProfileSettings {
   workDaysPerWeek: number;
   workHoursPerDay: number;
   defaultBreakMinutes: number;
-  annualVacationDays: number;
 }
 
 export type LogType = 'work' | 'sickLeave' | 'vacation';
