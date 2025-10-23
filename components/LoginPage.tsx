@@ -49,8 +49,9 @@ const LoginPage: React.FC<LoginPageProps> = ({ language, setLanguage, theme, set
         }
         setError(null);
         const provider = new firebase.auth.GoogleAuthProvider();
-        firebase.auth().signInWithPopup(provider).catch((error: any) => {
-            console.error("Error during Google sign-in:", error);
+        // Use signInWithRedirect which is more compatible with different environments
+        firebase.auth().signInWithRedirect(provider).catch((error: any) => {
+            console.error("Error during Google sign-in redirect:", error);
             setError(t('genericAuthError'));
         });
     };

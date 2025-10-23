@@ -45,6 +45,16 @@ const App: React.FC = () => {
   useEffect(() => {
     if (typeof firebase !== 'undefined' && firebase.apps.length > 0) {
       setFirebaseInitialized(true);
+
+      // Check for redirect result from Google Sign-In
+      firebase.auth().getRedirectResult()
+        .catch((error: any) => {
+          console.error("Error processing sign-in redirect:", error);
+          if (error.code !== 'auth/cancelled-popup-request') { // Ignore user closing popup/redirect
+            showToast(t('genericAuthError'), 'error');
+          }
+        });
+
       const unsubscribe = firebase.auth().onAuthStateChanged((user: any) => {
         setUser(user);
         if (user) {
@@ -57,7 +67,7 @@ const App: React.FC = () => {
         // Handle case where firebase is not initialized
         setLoadingAuth(false);
     }
-  }, [setIsGuest]);
+  }, [setIsGuest, showToast, t]);
 
 
   const handleLogout = () => {
